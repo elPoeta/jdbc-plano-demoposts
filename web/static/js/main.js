@@ -6,7 +6,10 @@ const URL_CATEGORIAS = 'api/categoriaServer';
 
 const traerCategorias = new Categoria();
 let categorias = [];
-
+let autor = {
+    "id":1,
+    "nombre":"elPoeta"
+};
 
 
 crearPost.addEventListener('click', (e) =>{

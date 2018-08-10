@@ -2,12 +2,15 @@
 package elpoeta.demopost.server;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import elpoeta.demopost.domain.Post;
+import elpoeta.demopost.domain.adapter.LocalDateTimeAdapter;
 import elpoeta.demopost.repository.impl.PostRepositoryImpl;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -22,12 +25,16 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet(name = "PostServer", urlPatterns = {"/api/postServer"})
 public class PostServer extends HttpServlet {
 
-  final static Gson CONVERTIR = new Gson();
+  //final static Gson CONVERTIR = new Gson();
+  private final static Gson CONVERTIR = new GsonBuilder()
+                                                .setPrettyPrinting()
+                                                .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+                                                .create();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-   	 System.out.println("GET Post");
+   	
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
         try {
@@ -35,11 +42,11 @@ public class PostServer extends HttpServlet {
  
           if(parametro == 0){
                 List<Post> listado =  PostRepositoryImpl.getInstance().buscarTodos();
-	             String resultado = CONVERTIR.toJson(listado);
+	             String resultado = CONVERTIR.toJson(listado); //gson.toJson(listado); //
 	             out.println("" + resultado);
           }else{
             Post post = PostRepositoryImpl.getInstance().buscarPorId(parametro);
-            String resultado = CONVERTIR.toJson(post);
+            String resultado = CONVERTIR.toJson(post); //gson.toJson(post); //
             out.println("" + resultado);
           }
         } catch (ClassNotFoundException ex) {

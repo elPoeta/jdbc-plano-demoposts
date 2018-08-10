@@ -21,9 +21,9 @@ import java.util.List;
  */
 public class PostRepositoryImpl implements CrudRepository<Post, Integer>{
     private static PostRepositoryImpl INSTANCE = null;
-    private final static String SQL_POSTS_SELECT = "SELECT * FROM post;";
+    private final static String SQL_POSTS_SELECT = "SELECT * FROM post ORDER BY fecha_creacion DESC;";
     private final static String SQL_POST_SELECT = "SELECT * FROM post WHERE id = ?;";
-    private final static String SQL_POST_INSERT = "INSERT INTO post (titulo, sub_titulo, cuerpo, categoria_id, autor_id)values(?,?,?,?,?);";
+    private final static String SQL_POST_INSERT = "INSERT INTO post (titulo, sub_titulo, cuerpo, fecha_creacion, categoria_id, autor_id)values(?,?,?,?,?,?);";
     
     private PostRepositoryImpl() throws ClassNotFoundException,
     IOException, SQLException {
@@ -55,6 +55,7 @@ public class PostRepositoryImpl implements CrudRepository<Post, Integer>{
 		        post.setTitulo(rs.getString("titulo"));
 		        post.setSubTitulo(rs.getString("sub_titulo"));
 		        post.setCuerpo(rs.getString("cuerpo"));
+                        post.setFechaCreacion(rs.getObject("fecha_creacion", LocalDateTime.class));
 		        Categoria cat = CategoriaRepositoryImpl.getInstance().buscarPorId(rs.getInt("categoria_id"));
 		        post.setCategoria(cat);
                         Autor autor = AutorRepositoryImpl.getInstance().buscarPorId(rs.getInt("autor_id"));
@@ -81,6 +82,7 @@ public class PostRepositoryImpl implements CrudRepository<Post, Integer>{
 
     @Override
     public List<Post> buscarTodos() throws ClassNotFoundException, IOException, SQLException {
+     
         ArrayList<Post> posts = new ArrayList();
 		Connection conexion = null;
 		PreparedStatement ptsmt = null;
@@ -98,7 +100,6 @@ public class PostRepositoryImpl implements CrudRepository<Post, Integer>{
 			        post.setSubTitulo(rs.getString("sub_titulo"));
 			        post.setCuerpo(rs.getString("cuerpo"));
                                 post.setFechaCreacion(rs.getObject("fecha_creacion", LocalDateTime.class));
-                                System.out.println("Fecha "+post.getFechaCreacion());
 			        Categoria cat = CategoriaRepositoryImpl.getInstance().buscarPorId(rs.getInt("categoria_id"));
 			        post.setCategoria(cat);
                                 Autor autor = AutorRepositoryImpl.getInstance().buscarPorId(rs.getInt("autor_id"));
